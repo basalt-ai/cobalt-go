@@ -1,0 +1,11 @@
+# cobalt.yaml — Cobalt AI evaluation framework configuration
+
+judge:
+  model: gpt-4o-mini
+  provider: openai
+
+concurrency: 3
+timeout: 30s
+testDir: ./experiments
+testMatch:
+  - "**/*.cobalt.go"
