@@ -2,6 +2,7 @@ package experiment
 
 import (
 	"context"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -88,9 +89,9 @@ func TestRun_Timeout(t *testing.T) {
 
 func TestRun_MultipleRuns(t *testing.T) {
 	ds := makeDataset(2)
-	callCount := 0
+	var callCount int64
 	runner := func(ctx context.Context, item map[string]any, index int) (string, error) {
-		callCount++
+		atomic.AddInt64(&callCount, 1)
 		return "world", nil
 	}
 
@@ -106,8 +107,8 @@ func TestRun_MultipleRuns(t *testing.T) {
 		t.Fatal(err)
 	}
 	// 2 items × 3 runs = 6 calls
-	if callCount != 6 {
-		t.Fatalf("expected 6 runner calls, got %d", callCount)
+	if atomic.LoadInt64(&callCount) != 6 {
+		t.Fatalf("expected 6 runner calls, got %d", atomic.LoadInt64(&callCount))
 	}
 }
 
